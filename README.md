@@ -1,7 +1,9 @@
 # Setting Up
 
-apt-get install jekyll
+```sh
+suod apt-get install -y jekyll
 jekyll serve
+```
 
 ## References
 
