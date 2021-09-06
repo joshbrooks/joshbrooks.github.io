@@ -18,7 +18,110 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="https://joshbrooks.github.io/my-super-post.html">My super title</a></h1>
+                    <h1 class="entry-title"><a href="https://joshbrooks.github.io/setting-up-code-qa-tools.html">Setting Up Code QA Tools</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2020-09-06T15:33:00+09:00">
+                Published: Sun 06 September 2020
+        </abbr>
+		<br />
+        <abbr class="modified" title="2020-09-06T15:33:00+09:00">
+                Updated: Sun 06 September 2020
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="https://joshbrooks.github.io/author/joshua-brooks.html">Joshua Brooks</a>
+        </address>
+<p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
+<p>tags: <a href="https://joshbrooks.github.io/tag/black.html">black</a> <a href="https://joshbrooks.github.io/tag/isort.html">isort</a> <a href="https://joshbrooks.github.io/tag/flake8.html">flake8</a> <a href="https://joshbrooks.github.io/tag/prettier.html">prettier</a> <a href="https://joshbrooks.github.io/tag/code-quality.html">code quality</a> </p>
+</footer><!-- /.post-info --><p>Chances are, if you're new to Python programming (or programming in general) you'll find yourself facing comments/suggestions about code style: "Please remove spaces", "Please put imports at top of the file".</p>
+<p>Things like that become second nature after a while but even experienced developers get caught out by "code style" issues. While they might not have any effect on how your code runs, keeping a consistent codestyle is really valuable for helping you and others understand what your team wrote when you revisit it later.</p>
+<p>One of the best ways to fix code style atrocities and <code>fixed spacing. Removed whitespace</code> commits, is to prevent them in the first place. Here are four of the tools we use in our tech stack to squash these before they get committed to code</p>
+<ul>
+<li>Flake8: The classic formatter helps you to catch all sorts of unwanted stuff in your code</li>
+<li>Black: The "opinionated Python formatter".</li>
+<li>isort: A small library to consistently order your code imports</li>
+<li>prettier: This one's not for Python; but it will handle your css, markdown, javascript and a ton of other files</li>
+</ul>
+<h1>Configuring them all</h1>
+<p>There's a lot of great resources around, I'll just post the 3 main config files which I use in my own projects. We tend to use Django in the backend and riotjs 5 in the frontend.</p>
+<h2>Black and isort</h2>
+<p>Black and isort can be configured from a <code>pyproject.toml</code> file. The main things to note are to tell the tools not to dive into and reformat files which are in a virtual env.</p>
+<p><strong>pyproject.toml</strong></p>
+<div class="highlight"><pre><span></span><span class="k">[tool.isort]</span>
+<span class="na">profile</span> <span class="o">=</span> <span class="s">&#39;black&#39;</span>
+<span class="na">skip</span> <span class="o">=</span> <span class="s">[&#39;env&#39;]</span>
+
+<span class="k">[tool.black]</span>
+<span class="na">line-length</span> <span class="o">=</span> <span class="s">180</span>
+<span class="na">target-version</span> <span class="o">=</span> <span class="s">[&#39;py38&#39;]</span>
+<span class="na">include</span> <span class="o">=</span> <span class="s">&#39;\.pyi?$&#39;</span>
+<span class="na">exclude</span> <span class="o">=</span> <span class="s">&#39;&#39;&#39;</span>
+<span class="na">/(</span>
+  <span class="na">| \.git</span>
+  <span class="na">| \.mypy_cache</span>
+  <span class="na">| \.tox</span>
+  <span class="na">| \.venv</span>
+  <span class="na">| \env</span>
+  <span class="na">| migrations</span>
+<span class="na">)/</span>
+<span class="na">&#39;&#39;&#39;</span>
+</pre></div>
+
+
+<h2>flake8</h2>
+<p>Flake8 can be configured in a few different locations. For our projects we generally ignore line-length and a couple of others</p>
+<p><strong>tox.ini</strong></p>
+<div class="highlight"><pre><span></span><span class="k">[flake8]</span>
+<span class="c1"># E501 line length</span>
+<span class="c1"># W503 break-before-boolean</span>
+<span class="c1"># E231 is &quot;missing whitespace&quot;</span>
+<span class="c1"># E203 is not PEP compliant</span>
+<span class="na">ignore</span> <span class="o">=</span> <span class="s">E501,W503,E203</span>
+<span class="na">exclude</span> <span class="o">=</span> <span class="s">env</span>
+</pre></div>
+
+
+<h2>prettier</h2>
+<p>Our prettierrc is still a work in progress. Because we use <code>.riot</code> files, (which are html with a different extension), some systems won't reformat them unless specifically told that they are html.</p>
+<div class="highlight"><pre><span></span>{
+    &quot;printWidth&quot;: 140,
+    &quot;tabWidth&quot;: 4,
+    &quot;useTabs&quot;: false,
+    &quot;bracketSpacing&quot;: false,
+    &quot;trailingComma&quot;: &quot;none&quot;,
+    &quot;overrides&quot;: [
+        {
+            &quot;files&quot;: &quot;*.riot&quot;,
+            &quot;options&quot;: {
+                &quot;parser&quot;: &quot;html&quot;
+            }
+        }
+    ]
+}
+</pre></div>
+
+
+<h1>Running these</h1>
+<ul>
+<li>invoke flake8 with <code>flake8 .</code> in your repo</li>
+<li>invoke black with <code>black .</code> in your repo</li>
+<li>invoke isort with <code>isort .</code> in your repo</li>
+<li>invoke prettier with <code>prettier --write src</code> to prettifty a "src" folder (note: prettier is quite aggressive... it'll try to reformat all sorts of files! Recommend only running it one folder at a time AFTER running it with --check!)</li>
+<li></li>
+</ul>                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="https://joshbrooks.github.io/my-super-post.html" rel="bookmark"
+                           title="Permalink to My super title">My super title</a></h1>
+                </header>
+
+                <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2010-12-03T10:20:00+09:00">
                 Published: Fri 03 December 2010
@@ -34,8 +137,12 @@
         </address>
 <p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
 <p>tags: <a href="https://joshbrooks.github.io/tag/pelican.html">pelican</a> <a href="https://joshbrooks.github.io/tag/publishing.html">publishing</a> </p>
-</footer><!-- /.post-info --><p>This is the content of my super blog post.</p>                </article>
-            </aside><!-- /#featured -->
+</footer><!-- /.post-info -->                <p>Short version for index and feeds</p>
+                <a class="readmore" href="https://joshbrooks.github.io/my-super-post.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+                </ol><!-- /#posts-list -->
+                </section><!-- /#content -->
         <section id="extras" class="body">
                 <div class="blogroll">
                         <h2>links</h2>

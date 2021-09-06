@@ -1,2 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Pykafe Timor - Python</title><link href="https://joshbrooks.github.io/" rel="alternate"></link><link href="https://joshbrooks.github.io/feeds/python.atom.xml" rel="self"></link><id>https://joshbrooks.github.io/</id><updated>2010-12-05T19:30:00+09:00</updated><subtitle></subtitle><entry><title>My super title</title><link href="https://joshbrooks.github.io/my-super-post.html" rel="alternate"></link><published>2010-12-03T10:20:00+09:00</published><updated>2010-12-05T19:30:00+09:00</updated><author><name>Alexis Metaireau</name></author><id>tag:joshbrooks.github.io,2010-12-03:/my-super-post.html</id><summary type="html">&lt;p&gt;Short version for index and feeds&lt;/p&gt;</summary><content type="html">&lt;p&gt;This is the content of my super blog post.&lt;/p&gt;</content><category term="Python"></category><category term="pelican"></category><category term="publishing"></category></entry></feed>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Pykafe Timor - Python</title><link href="https://joshbrooks.github.io/" rel="alternate"></link><link href="https://joshbrooks.github.io/feeds/python.atom.xml" rel="self"></link><id>https://joshbrooks.github.io/</id><updated>2020-09-06T15:33:00+09:00</updated><subtitle></subtitle><entry><title>Setting Up Code QA Tools</title><link href="https://joshbrooks.github.io/setting-up-code-qa-tools.html" rel="alternate"></link><published>2020-09-06T15:33:00+09:00</published><updated>2020-09-06T15:33:00+09:00</updated><author><name>Joshua Brooks</name></author><id>tag:joshbrooks.github.io,2020-09-06:/setting-up-code-qa-tools.html</id><summary type="html">&lt;p&gt;Description and configuration of black, isort, flake8 and prettier&lt;/p&gt;</summary><content type="html">&lt;p&gt;Chances are, if you're new to Python programming (or programming in general) you'll find yourself facing comments/suggestions about code style: "Please remove spaces", "Please put imports at top of the file".&lt;/p&gt;
+&lt;p&gt;Things like that become second nature after a while but even experienced developers get caught out by "code style" issues. While they might not have any effect on how your code runs, keeping a consistent codestyle is really valuable for helping you and others understand what your team wrote when you revisit it later.&lt;/p&gt;
+&lt;p&gt;One of the best ways to fix code style atrocities and &lt;code&gt;fixed spacing. Removed whitespace&lt;/code&gt; commits, is to prevent them in the first place. Here are four of the tools we use in our tech stack to squash these before they get committed to code&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Flake8: The classic formatter helps you to catch all sorts of unwanted stuff in your code&lt;/li&gt;
+&lt;li&gt;Black: The "opinionated Python formatter".&lt;/li&gt;
+&lt;li&gt;isort: A small library to consistently order your code imports&lt;/li&gt;
+&lt;li&gt;prettier: This one's not for Python; but it will handle your css, markdown, javascript and a ton of other files&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;Configuring them all&lt;/h1&gt;
+&lt;p&gt;There's a lot of great resources around, I'll just post the 3 main config files which I use in my own projects. We tend to use Django in the backend and riotjs 5 in the frontend.&lt;/p&gt;
+&lt;h2&gt;Black and isort&lt;/h2&gt;
+&lt;p&gt;Black and isort can be configured from a &lt;code&gt;pyproject.toml&lt;/code&gt; file. The main things to note are to tell the tools not to dive into and reformat files which are in a virtual env.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;pyproject.toml&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[tool.isort]&lt;/span&gt;
+&lt;span class="na"&gt;profile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;black&amp;#39;&lt;/span&gt;
+&lt;span class="na"&gt;skip&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;[&amp;#39;env&amp;#39;]&lt;/span&gt;
+
+&lt;span class="k"&gt;[tool.black]&lt;/span&gt;
+&lt;span class="na"&gt;line-length&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;180&lt;/span&gt;
+&lt;span class="na"&gt;target-version&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;[&amp;#39;py38&amp;#39;]&lt;/span&gt;
+&lt;span class="na"&gt;include&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;\.pyi?$&amp;#39;&lt;/span&gt;
+&lt;span class="na"&gt;exclude&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;span class="na"&gt;/(&lt;/span&gt;
+  &lt;span class="na"&gt;| \.git&lt;/span&gt;
+  &lt;span class="na"&gt;| \.mypy_cache&lt;/span&gt;
+  &lt;span class="na"&gt;| \.tox&lt;/span&gt;
+  &lt;span class="na"&gt;| \.venv&lt;/span&gt;
+  &lt;span class="na"&gt;| \env&lt;/span&gt;
+  &lt;span class="na"&gt;| migrations&lt;/span&gt;
+&lt;span class="na"&gt;)/&lt;/span&gt;
+&lt;span class="na"&gt;&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;flake8&lt;/h2&gt;
+&lt;p&gt;Flake8 can be configured in a few different locations. For our projects we generally ignore line-length and a couple of others&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;tox.ini&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[flake8]&lt;/span&gt;
+&lt;span class="c1"&gt;# E501 line length&lt;/span&gt;
+&lt;span class="c1"&gt;# W503 break-before-boolean&lt;/span&gt;
+&lt;span class="c1"&gt;# E231 is &amp;quot;missing whitespace&amp;quot;&lt;/span&gt;
+&lt;span class="c1"&gt;# E203 is not PEP compliant&lt;/span&gt;
+&lt;span class="na"&gt;ignore&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;E501,W503,E203&lt;/span&gt;
+&lt;span class="na"&gt;exclude&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;env&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;prettier&lt;/h2&gt;
+&lt;p&gt;Our prettierrc is still a work in progress. Because we use &lt;code&gt;.riot&lt;/code&gt; files, (which are html with a different extension), some systems won't reformat them unless specifically told that they are html.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;{
+    &amp;quot;printWidth&amp;quot;: 140,
+    &amp;quot;tabWidth&amp;quot;: 4,
+    &amp;quot;useTabs&amp;quot;: false,
+    &amp;quot;bracketSpacing&amp;quot;: false,
+    &amp;quot;trailingComma&amp;quot;: &amp;quot;none&amp;quot;,
+    &amp;quot;overrides&amp;quot;: [
+        {
+            &amp;quot;files&amp;quot;: &amp;quot;*.riot&amp;quot;,
+            &amp;quot;options&amp;quot;: {
+                &amp;quot;parser&amp;quot;: &amp;quot;html&amp;quot;
+            }
+        }
+    ]
+}
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1&gt;Running these&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;invoke flake8 with &lt;code&gt;flake8 .&lt;/code&gt; in your repo&lt;/li&gt;
+&lt;li&gt;invoke black with &lt;code&gt;black .&lt;/code&gt; in your repo&lt;/li&gt;
+&lt;li&gt;invoke isort with &lt;code&gt;isort .&lt;/code&gt; in your repo&lt;/li&gt;
+&lt;li&gt;invoke prettier with &lt;code&gt;prettier --write src&lt;/code&gt; to prettifty a "src" folder (note: prettier is quite aggressive... it'll try to reformat all sorts of files! Recommend only running it one folder at a time AFTER running it with --check!)&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><category term="Python"></category><category term="black"></category><category term="isort"></category><category term="flake8"></category><category term="prettier"></category><category term="code quality"></category></entry><entry><title>My super title</title><link href="https://joshbrooks.github.io/my-super-post.html" rel="alternate"></link><published>2010-12-03T10:20:00+09:00</published><updated>2010-12-05T19:30:00+09:00</updated><author><name>Alexis Metaireau</name></author><id>tag:joshbrooks.github.io,2010-12-03:/my-super-post.html</id><summary type="html">&lt;p&gt;Short version for index and feeds&lt;/p&gt;</summary><content type="html">&lt;p&gt;This is the content of my super blog post.&lt;/p&gt;</content><category term="Python"></category><category term="pelican"></category><category term="publishing"></category></entry></feed>

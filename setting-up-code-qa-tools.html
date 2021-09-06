@@ -3,22 +3,28 @@
 <head>
         <meta charset="utf-8" />
         <meta name="generator" content="Pelican" />
-        <title>Pykafe Timor</title>
+        <title>Setting Up Code QA Tools</title>
         <link rel="stylesheet" href="https://joshbrooks.github.io/theme/css/main.css" />
         <link href="https://joshbrooks.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pykafe Timor Atom Feed" />
+        <meta name="description" content="Description and configuration of black, isort, flake8 and prettier" />
 </head>
 
 <body id="index" class="home">
         <header id="banner" class="body">
                 <h1><a href="https://joshbrooks.github.io/">Pykafe Timor</a></h1>
                 <nav><ul>
-                    <li><a href="https://joshbrooks.github.io/category/python.html">Python</a></li>
+                    <li class="active"><a href="https://joshbrooks.github.io/category/python.html">Python</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="https://joshbrooks.github.io/setting-up-code-qa-tools.html" rel="bookmark"
+           title="Permalink to Setting Up Code QA Tools">Setting Up Code QA Tools</a></h1>
+    </header>
 
-            <aside id="featured" class="body">
-                <article>
-                    <h1 class="entry-title"><a href="https://joshbrooks.github.io/setting-up-code-qa-tools.html">Setting Up Code QA Tools</a></h1>
+    <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2020-09-06T15:33:00+09:00">
                 Published: Sun 06 September 2020
@@ -33,7 +39,7 @@
         </address>
 <p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
 <p>tags: <a href="https://joshbrooks.github.io/tag/black.html">black</a> <a href="https://joshbrooks.github.io/tag/isort.html">isort</a> <a href="https://joshbrooks.github.io/tag/flake8.html">flake8</a> <a href="https://joshbrooks.github.io/tag/prettier.html">prettier</a> <a href="https://joshbrooks.github.io/tag/code-quality.html">code quality</a> </p>
-</footer><!-- /.post-info --><p>Chances are, if you're new to Python programming (or programming in general) you'll find yourself facing comments/suggestions about code style: "Please remove spaces", "Please put imports at top of the file".</p>
+</footer><!-- /.post-info -->      <p>Chances are, if you're new to Python programming (or programming in general) you'll find yourself facing comments/suggestions about code style: "Please remove spaces", "Please put imports at top of the file".</p>
 <p>Things like that become second nature after a while but even experienced developers get caught out by "code style" issues. While they might not have any effect on how your code runs, keeping a consistent codestyle is really valuable for helping you and others understand what your team wrote when you revisit it later.</p>
 <p>One of the best ways to fix code style atrocities and <code>fixed spacing. Removed whitespace</code> commits, is to prevent them in the first place. Here are four of the tools we use in our tech stack to squash these before they get committed to code</p>
 <ul>
@@ -108,41 +114,11 @@
 <li>invoke isort with <code>isort .</code> in your repo</li>
 <li>invoke prettier with <code>prettier --write src</code> to prettifty a "src" folder (note: prettier is quite aggressive... it'll try to reformat all sorts of files! Recommend only running it one folder at a time AFTER running it with --check!)</li>
 <li></li>
-</ul>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
+</ul>
+    </div><!-- /.entry-content -->
 
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://joshbrooks.github.io/my-super-post.html" rel="bookmark"
-                           title="Permalink to My super title">My super title</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2010-12-03T10:20:00+09:00">
-                Published: Fri 03 December 2010
-        </abbr>
-		<br />
-        <abbr class="modified" title="2010-12-05T19:30:00+09:00">
-                Updated: Sun 05 December 2010
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://joshbrooks.github.io/author/alexis-metaireau.html">Alexis Metaireau</a>
-                        <a class="url fn" href="https://joshbrooks.github.io/author/conan-doyle.html">Conan Doyle</a>
-        </address>
-<p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
-<p>tags: <a href="https://joshbrooks.github.io/tag/pelican.html">pelican</a> <a href="https://joshbrooks.github.io/tag/publishing.html">publishing</a> </p>
-</footer><!-- /.post-info -->                <p>Short version for index and feeds</p>
-                <a class="readmore" href="https://joshbrooks.github.io/my-super-post.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-                </ol><!-- /#posts-list -->
-                </section><!-- /#content -->
+  </article>
+</section>
         <section id="extras" class="body">
                 <div class="blogroll">
                         <h2>links</h2>
