@@ -1,5 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Pykafe Timor - Python</title><link href="https://joshbrooks.github.io/" rel="alternate"></link><link href="https://joshbrooks.github.io/feeds/python.atom.xml" rel="self"></link><id>https://joshbrooks.github.io/</id><updated>2020-09-06T15:34:00+09:00</updated><subtitle></subtitle><entry><title>Using Github Actions</title><link href="https://joshbrooks.github.io/using-github-actions.html" rel="alternate"></link><published>2020-09-06T15:34:00+09:00</published><updated>2020-09-06T15:34:00+09:00</updated><author><name>Joshua Brooks</name></author><id>tag:joshbrooks.github.io,2020-09-06:/using-github-actions.html</id><summary type="html">&lt;p&gt;Introduction to Github Actions&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Git Actions&lt;/h1&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Pykafe Timor - Python</title><link href="https://joshbrooks.github.io/" rel="alternate"></link><link href="https://joshbrooks.github.io/feeds/python.atom.xml" rel="self"></link><id>https://joshbrooks.github.io/</id><updated>2020-09-07T09:45:00+09:00</updated><subtitle></subtitle><entry><title>Using Pyinstrument</title><link href="https://joshbrooks.github.io/using-pyinstrument.html" rel="alternate"></link><published>2020-09-07T09:45:00+09:00</published><updated>2020-09-07T09:45:00+09:00</updated><author><name>Joshua Brooks</name></author><id>tag:joshbrooks.github.io,2020-09-07:/using-pyinstrument.html</id><summary type="html">&lt;p&gt;Py instrument with Django&lt;/p&gt;</summary><content type="html">&lt;p&gt;Why might you want pyinstrument?&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It's super easy to use&lt;/li&gt;
+&lt;li&gt;It has great django integration&lt;/li&gt;
+&lt;li&gt;It works with modern python (async/await)&lt;/li&gt;
+&lt;li&gt;Its output is easy to read and understand (if you've tried cprofile + kcachegrind you'll see what I mean!)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a href="https://pyinstrument.readthedocs.io/"&gt;Pyinstrument&lt;/a&gt; is an easy to use tool which measures how your Python program performs. It's got great integration with Django. With just a couple of small changes to your settings you can start finding and fixing slow parts of your code.&lt;/p&gt;
+&lt;h2&gt;Installing&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pip install pyinstrument
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Configuring for Django&lt;/h2&gt;
+&lt;p&gt;the &lt;a href="https://pyinstrument.readthedocs.io/en/latest/guide.html#profile-a-web-request-in-django"&gt;docs&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Add to your MIDDLEWARE:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;    &amp;quot;pyinstrument.middleware.ProfilerMiddleware&amp;quot;,
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You can profile a page by appending &lt;code&gt;?profile&lt;/code&gt; to a request, or profile all requests by adding &lt;code&gt;PYINSTRUMENT_PROFILE_DIR = 'profiles'&lt;/code&gt; to settings.&lt;/p&gt;
+&lt;h2&gt;Other Uses&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Pyinstrument can &lt;a href="https://pyinstrument.readthedocs.io/en/latest/guide.html#profile-a-python-script"&gt;profile a script&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Or &lt;a href="https://pyinstrument.readthedocs.io/en/latest/guide.html#profile-a-specific-chunk-of-code"&gt;wrap any python code&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1&gt;Pyinstrument in bug finding&lt;/h1&gt;
+&lt;p&gt;One of the pages I was profiling was loading fairly fast - but take a look at what's going on here!&lt;/p&gt;
+&lt;p&gt;&lt;img alt="pyinstrument profiling image" src="https://joshbrooks.github.io/images/pyinstrument_1.png"&gt;&lt;/p&gt;
+&lt;p&gt;There's a &lt;code&gt;save&lt;/code&gt; in the middle of our GET request. Most of that time was taken up in updating save indexes (something else to optimmise!) but the concern is why we're actually running &lt;code&gt;activity.save()&lt;/code&gt; on something every time we visit the list.&lt;/p&gt;
+&lt;p&gt;As it turned out, the save was conditional on &lt;code&gt;activity.completion&lt;/code&gt; being None. It was supposed to set that... but because of a type comparison bug it was not setting the completion. Therefore the next visit would save again... and again... and again...&lt;/p&gt;
+&lt;p&gt;The point here is that pyinstrument gave me the right level of detail to go "That's funny..." and quickly identify and fix a otentially serious bug. As to &lt;em&gt;why&lt;/em&gt; that save is occuring, that's probably something we want to resolve outside of a request/response cycle.&lt;/p&gt;
+&lt;p&gt;But that's "a story for another time!"&lt;/p&gt;</content><category term="Python"></category><category term="pyinstrument"></category></entry><entry><title>Making a Django App from scratch</title><link href="https://joshbrooks.github.io/django-app-from-scratch.html" rel="alternate"></link><published>2020-09-06T16:19:00+09:00</published><updated>2020-09-06T16:19:00+09:00</updated><author><name>Joshua Brooks</name></author><id>tag:joshbrooks.github.io,2020-09-06:/django-app-from-scratch.html</id><summary type="html">&lt;p&gt;Setting up a Django app from scratch&lt;/p&gt;</summary><content type="html">&lt;p&gt;Install django as a user package&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;pip install --user django
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Roll your app&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;django-admin.py startapp my_app_name
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Get it into git&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;cd my_app_name
+git init
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Get it into github&lt;/p&gt;
+&lt;p&gt;Set up your code style for flake8, black, isort etc&lt;/p&gt;
+&lt;p&gt;Set up your requirements&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;mkdir requirements
+touch requirements/base.in
+&lt;/pre&gt;&lt;/div&gt;</content><category term="Python"></category><category term="django"></category></entry><entry><title>Using Github Actions</title><link href="https://joshbrooks.github.io/using-github-actions.html" rel="alternate"></link><published>2020-09-06T15:34:00+09:00</published><updated>2020-09-06T15:34:00+09:00</updated><author><name>Joshua Brooks</name></author><id>tag:joshbrooks.github.io,2020-09-06:/using-github-actions.html</id><summary type="html">&lt;p&gt;Introduction to Github Actions&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Git Actions&lt;/h1&gt;
 &lt;p&gt;Git Actions are a (relatively) new way of doing all sorts of interesting things with your code. Actions can run QA checks, tests, publish packages, create distributable files, and much much more. Actions are configured by adding &lt;code&gt;yaml&lt;/code&gt; files into the &lt;code&gt;.github/workflows&lt;/code&gt; directory of your repo&lt;/p&gt;
 &lt;p&gt;Some of the other interesting things you can do:
  - Install system packages and run command line tools
@@ -143,4 +196,4 @@
 &lt;li&gt;invoke isort with &lt;code&gt;isort .&lt;/code&gt; in your repo&lt;/li&gt;
 &lt;li&gt;invoke prettier with &lt;code&gt;prettier --write src&lt;/code&gt; to prettifty a "src" folder (note: prettier is quite aggressive... it'll try to reformat all sorts of files! Recommend only running it one folder at a time AFTER running it with --check!)&lt;/li&gt;
 &lt;li&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><category term="Python"></category><category term="black"></category><category term="isort"></category><category term="flake8"></category><category term="prettier"></category><category term="code quality"></category></entry><entry><title>My super title</title><link href="https://joshbrooks.github.io/my-super-post.html" rel="alternate"></link><published>2010-12-03T10:20:00+09:00</published><updated>2010-12-05T19:30:00+09:00</updated><author><name>Alexis Metaireau</name></author><id>tag:joshbrooks.github.io,2010-12-03:/my-super-post.html</id><summary type="html">&lt;p&gt;Short version for index and feeds&lt;/p&gt;</summary><content type="html">&lt;p&gt;This is the content of my super blog post.&lt;/p&gt;</content><category term="Python"></category><category term="pelican"></category><category term="publishing"></category></entry></feed>
+&lt;/ul&gt;</content><category term="Python"></category><category term="black"></category><category term="isort"></category><category term="flake8"></category><category term="prettier"></category><category term="code quality"></category></entry></feed>

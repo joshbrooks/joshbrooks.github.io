@@ -3,9 +3,10 @@
 <head>
         <meta charset="utf-8" />
         <meta name="generator" content="Pelican" />
-        <title>Pykafe Timor - Python</title>
+        <title>Using Pyinstrument</title>
         <link rel="stylesheet" href="https://joshbrooks.github.io/theme/css/main.css" />
         <link href="https://joshbrooks.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Pykafe Timor Atom Feed" />
+        <meta name="description" content="Py instrument with Django" />
 </head>
 
 <body id="index" class="home">
@@ -15,10 +16,15 @@
                     <li class="active"><a href="https://joshbrooks.github.io/category/python.html">Python</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="https://joshbrooks.github.io/using-pyinstrument.html" rel="bookmark"
+           title="Permalink to Using Pyinstrument">Using Pyinstrument</a></h1>
+    </header>
 
-            <aside id="featured" class="body">
-                <article>
-                    <h1 class="entry-title"><a href="https://joshbrooks.github.io/using-pyinstrument.html">Using Pyinstrument</a></h1>
+    <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2020-09-07T09:45:00+09:00">
                 Published: Mon 07 September 2020
@@ -33,7 +39,7 @@
         </address>
 <p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
 <p>tags: <a href="https://joshbrooks.github.io/tag/pyinstrument.html">pyinstrument</a> </p>
-</footer><!-- /.post-info --><p>Why might you want pyinstrument?</p>
+</footer><!-- /.post-info -->      <p>Why might you want pyinstrument?</p>
 <ul>
 <li>It's super easy to use</li>
 <li>It has great django integration</li>
@@ -65,92 +71,11 @@
 <p>There's a <code>save</code> in the middle of our GET request. Most of that time was taken up in updating save indexes (something else to optimmise!) but the concern is why we're actually running <code>activity.save()</code> on something every time we visit the list.</p>
 <p>As it turned out, the save was conditional on <code>activity.completion</code> being None. It was supposed to set that... but because of a type comparison bug it was not setting the completion. Therefore the next visit would save again... and again... and again...</p>
 <p>The point here is that pyinstrument gave me the right level of detail to go "That's funny..." and quickly identify and fix a otentially serious bug. As to <em>why</em> that save is occuring, that's probably something we want to resolve outside of a request/response cycle.</p>
-<p>But that's "a story for another time!"</p>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                    <ol id="posts-list" class="hfeed">
+<p>But that's "a story for another time!"</p>
+    </div><!-- /.entry-content -->
 
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://joshbrooks.github.io/django-app-from-scratch.html" rel="bookmark"
-                           title="Permalink to Making a Django App from scratch">Making a Django App from scratch</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2020-09-06T16:19:00+09:00">
-                Published: Sun 06 September 2020
-        </abbr>
-		<br />
-        <abbr class="modified" title="2020-09-06T16:19:00+09:00">
-                Updated: Sun 06 September 2020
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://joshbrooks.github.io/author/joshua-brooks.html">Joshua Brooks</a>
-        </address>
-<p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
-<p>tags: <a href="https://joshbrooks.github.io/tag/django.html">django</a> </p>
-</footer><!-- /.post-info -->                <p>Setting up a Django app from scratch</p>
-                <a class="readmore" href="https://joshbrooks.github.io/django-app-from-scratch.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://joshbrooks.github.io/using-github-actions.html" rel="bookmark"
-                           title="Permalink to Using Github Actions">Using Github Actions</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2020-09-06T15:34:00+09:00">
-                Published: Sun 06 September 2020
-        </abbr>
-		<br />
-        <abbr class="modified" title="2020-09-06T15:34:00+09:00">
-                Updated: Sun 06 September 2020
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://joshbrooks.github.io/author/joshua-brooks.html">Joshua Brooks</a>
-        </address>
-<p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
-<p>tags: <a href="https://joshbrooks.github.io/tag/github.html">github</a> <a href="https://joshbrooks.github.io/tag/actions.html">actions</a> </p>
-</footer><!-- /.post-info -->                <p>Introduction to Github Actions</p>
-                <a class="readmore" href="https://joshbrooks.github.io/using-github-actions.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="https://joshbrooks.github.io/setting-up-code-qa-tools.html" rel="bookmark"
-                           title="Permalink to Setting Up Code QA Tools">Setting Up Code QA Tools</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <abbr class="published" title="2020-09-06T15:33:00+09:00">
-                Published: Sun 06 September 2020
-        </abbr>
-		<br />
-        <abbr class="modified" title="2020-09-06T15:33:00+09:00">
-                Updated: Sun 06 September 2020
-        </abbr>
-
-        <address class="vcard author">
-                By                         <a class="url fn" href="https://joshbrooks.github.io/author/joshua-brooks.html">Joshua Brooks</a>
-        </address>
-<p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
-<p>tags: <a href="https://joshbrooks.github.io/tag/black.html">black</a> <a href="https://joshbrooks.github.io/tag/isort.html">isort</a> <a href="https://joshbrooks.github.io/tag/flake8.html">flake8</a> <a href="https://joshbrooks.github.io/tag/prettier.html">prettier</a> <a href="https://joshbrooks.github.io/tag/code-quality.html">code quality</a> </p>
-</footer><!-- /.post-info -->                <p>Description and configuration of black, isort, flake8 and prettier</p>
-                <a class="readmore" href="https://joshbrooks.github.io/setting-up-code-qa-tools.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-                </ol><!-- /#posts-list -->
-                </section><!-- /#content -->
+  </article>
+</section>
         <section id="extras" class="body">
                 <div class="blogroll">
                         <h2>links</h2>
