@@ -18,7 +18,158 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="https://joshbrooks.github.io/django-app-from-scratch.html">Making a Django App from scratch</a></h1>
+                    <h1 class="entry-title"><a href="https://joshbrooks.github.io/sheets-to-django.html">Google Sheets to Django Pipeline</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2021-11-11T13:33:00+09:00">
+                Published: Thu 11 November 2021
+        </abbr>
+		<br />
+        <abbr class="modified" title="2021-11-11T13:33:00+09:00">
+                Updated: Thu 11 November 2021
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="https://joshbrooks.github.io/author/joshua-brooks.html">Joshua Brooks</a>
+        </address>
+<p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
+<p>tags: <a href="https://joshbrooks.github.io/tag/django.html">django</a> <a href="https://joshbrooks.github.io/tag/sheets.html">sheets</a> </p>
+</footer><!-- /.post-info --><h1>Intro</h1>
+<p>Google Sheets is a great way to share data: it's easy to set up, easy to import/export data in table form, and has comprehensive access control.
+But while it's great for sharing data between humans, making it "machine readable" has some challenges.</p>
+<p>In a recent project I tackled two big challenges</p>
+<ul>
+<li>The first: how do you fetch the data? You can export it to csv or xls but that's a pretty intensive task when facing 100's of sheets.</li>
+<li>The second: How do you account for all the spelling variations you'll get in headers, location names etc?</li>
+</ul>
+<h1>Fetching that data</h1>
+<p>Reading raw data from Google Sheets is surprisingly easy if you go with an API key for authentication. (You can also do oauth, much more involved, won't cover that here). You need to sign up for a developer key.</p>
+<p>Once done you make a query to the API endpoint: "https://sheets.googleapis.com/v4/spreadsheets"
+with properly encoded values for sheet name, range and spreadsheet id</p>
+<p>The demo page uses the following values:</p>
+<p>sheet_name: str = "Class Data"
+range: str = "A2:E"
+spreadsheet_id: str = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"</p>
+<ul>
+<li>The sheet has to be "readable by everyone with the link"</li>
+<li>XLSX sheets won't work - you might need to convert to Google Sheets in that case</li>
+</ul>
+<p>To make this a bit easier I wrote a small dataclass to return the data</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">BaseSheetSource</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Defines a google sheets table to import</span>
+<span class="sd">    Given an API key, we can request amy publically shared sheet from Google sheets api</span>
+<span class="sd">    with an http request. This is based on the code in https://developers.google.com/sheets/api/quickstart/python</span>
+<span class="sd">    but foregoes the HTTP authentication step in favor of a key provided in settings.</span>
+
+<span class="sd">    The sheet must be &quot;shared to anyone with the link&quot;</span>
+<span class="sd">    but of course you can share it and then unshare it once you&#39;re done</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sheet_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">range</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">spreadsheet_id</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">google_api_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;YourKeyHere&quot;</span>
+
+    <span class="k">def</span> <span class="nf">uri</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">service</span> <span class="o">=</span> <span class="s2">&quot;https://sheets.googleapis.com/v4/spreadsheets&quot;</span>
+        <span class="n">spreadsheet_id</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spreadsheet_id</span><span class="p">)</span>
+        <span class="n">sheet_name</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sheet_name</span><span class="p">)</span>
+        <span class="nb">range</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">service</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">spreadsheet_id</span><span class="si">}</span><span class="s2">/values/</span><span class="si">{</span><span class="n">sheet_name</span><span class="si">}</span><span class="s2">!</span><span class="si">{</span><span class="nb">range</span><span class="si">}</span><span class="s2">?key=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">google_api_key</span><span class="si">}</span><span class="s2">&amp;alt=json&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">]:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">())</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">E</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Check that the sheet you are trying to access is shared&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">E</span>
+        <span class="n">jsonresponse</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">jsonresponse</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">return</span> <span class="n">values</span>
+</pre></div>
+
+
+<h1>Dealing With Spelling Variants</h1>
+<p>In our case we're looking at area names. For a more advanced case we might go with fuzzy string matching but here I'm using a simple dictionary class</p>
+<ul>
+<li>Populate the dictionary with the "canonical" values</li>
+<li>Update the dictionary with "alias" values</li>
+</ul>
+<p>For actually making the data I found it easier to get two lists of distinct values, order by name, and move ranges around in a spreadsheet until I had nice values for lookup.</p>
+<p>The first value is the data we're getting, and the second is the name in our database</p>
+<div class="highlight"><pre><span></span>    <span class="n">aliases</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;Aitape - Lumi&quot;</span><span class="p">,</span> <span class="s2">&quot;Aitape-Lumi District&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Ambunti - Dreikikir&quot;</span><span class="p">,</span> <span class="s2">&quot;Ambunti-Dreikikier District&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Angalimp - South Wahgi&quot;</span><span class="p">,</span> <span class="s2">&quot;Anglimp-South Waghi District&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Baiyer - Mul&quot;</span><span class="p">,</span> <span class="s2">&quot;Mul-Baiyer District&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Finschaffen&quot;</span><span class="p">,</span> <span class="s2">&quot;Finschhafen District&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Houn - Gulf&quot;</span><span class="p">,</span> <span class="s2">&quot;Huon District&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;Ialibu - Pangia&quot;</span><span class="p">,</span> <span class="s2">&quot;Ialibu-Pangia District&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DistrictLookupDict</span><span class="p">(</span><span class="n">UserDict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a class to lookup a value from the &quot;Area&quot; table</span>
+<span class="sd">    with some smarts to translate an unidentified value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;Aitape - Lumi&quot;</span><span class="p">,</span> <span class="s2">&quot;Aitape-Lumi District&quot;</span><span class="p">),</span>
+        <span class="c1"># ...</span>
+        <span class="p">(</span><span class="s2">&quot;Esa&#39;Ala&quot;</span><span class="p">,</span> <span class="s2">&quot;Esa&#39;ala District&quot;</span><span class="p">),</span>
+    <span class="p">)</span>  <span class="c1"># type: Tuple[Tuple[str, str]]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">aliases</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">aliases</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Fetch canonical area name to code list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">Area</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">kind__name</span><span class="o">=</span><span class="s2">&quot;district&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Also match whether &quot;District&quot; is included in the candidate or not</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">[:</span><span class="o">-</span><span class="mi">9</span><span class="p">]:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;District&quot;</span><span class="p">)})</span>
+
+        <span class="c1"># Match known aliases</span>
+        <span class="k">if</span> <span class="n">aliases</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">alias</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="bp">self</span><span class="p">[</span><span class="n">alias</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">})</span>
+</pre></div>
+
+
+<p>This is going to give us a dict object with all the variant spellings:</p>
+<ul>
+<li>Esa'ala District (original value)</li>
+<li>Esa'ala (from the original values minus "District" ending)</li>
+<li>Esa'Ala (from "aliases")</li>
+</ul>
+<p>will provide the same code. Handy for making sure we're properly linking foreign key data!</p>                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="https://joshbrooks.github.io/django-app-from-scratch.html" rel="bookmark"
+                           title="Permalink to Making a Django App from scratch">Making a Django App from scratch</a></h1>
+                </header>
+
+                <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2020-09-06T16:19:00+09:00">
                 Published: Sun 06 September 2020
@@ -33,37 +184,17 @@
         </address>
 <p>In <a href="https://joshbrooks.github.io/category/python.html">Python</a>.</p>
 <p>tags: <a href="https://joshbrooks.github.io/tag/django.html">django</a> </p>
-</footer><!-- /.post-info --><p>Install django as a user package</p>
-<div class="highlight"><pre><span></span>pip install --user django
-</pre></div>
-
-
-<p>Roll your app</p>
-<div class="highlight"><pre><span></span>django-admin.py startapp my_app_name
-</pre></div>
-
-
-<p>Get it into git</p>
-<div class="highlight"><pre><span></span>cd my_app_name
-git init
-</pre></div>
-
-
-<p>Get it into github</p>
-<p>Set up your code style for flake8, black, isort etc</p>
-<p>Set up your requirements</p>
-<div class="highlight"><pre><span></span>mkdir requirements
-touch requirements/base.in
-</pre></div>                </article>
-            </aside><!-- /#featured -->
+</footer><!-- /.post-info -->                <p>Setting up a Django app from scratch</p>
+                <a class="readmore" href="https://joshbrooks.github.io/django-app-from-scratch.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+                </ol><!-- /#posts-list -->
+                </section><!-- /#content -->
         <section id="extras" class="body">
                 <div class="blogroll">
                         <h2>links</h2>
                         <ul>
-                            <li><a href="https://getpelican.com/">Pelican</a></li>
-                            <li><a href="https://www.python.org/">Python.org</a></li>
-                            <li><a href="https://palletsprojects.com/p/jinja/">Jinja2</a></li>
-                            <li><a href="#">You can modify those links in your config file</a></li>
+                            <li><a href="https://catalpa.io/">Catalpa.io</a></li>
                         </ul>
                 </div><!-- /.blogroll -->
                 <div class="social">
@@ -71,8 +202,7 @@ touch requirements/base.in
                         <ul>
                             <li><a href="https://joshbrooks.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
 
-                            <li><a href="#">You can add links in your config file</a></li>
-                            <li><a href="#">Another social link</a></li>
+                            <li><a href="https://web.facebook.com/joshua.brooks.9615/">Facebook</a></li>
                         </ul>
                 </div><!-- /.social -->
         </section><!-- /#extras -->
